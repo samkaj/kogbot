@@ -14,7 +14,6 @@ async def ping(ctx):
     await ctx.send('pong')
 
 @pb.command(pass_context=True)
-@commands.has_any_role("Big Cheese", "Medium Cheese")
 @commands.has_permissions(administrator=True)
 async def set_welcome_message(ctx, *args):
     json_object["WELCOME_MESSAGE"] = ' '.join(args)
