@@ -6,8 +6,8 @@ intents.members = True
 
 client = commands.Bot(command_prefix="<", intents=intents)
 
-def load_config():
-    with open('data/config.json', 'r', encoding='utf-8') as doc:
+def load_from_data(filename):
+    with open(f'data/{filename}.json', 'r', encoding='utf-8') as doc:
         return json.load(doc)
 
 @client.command()
@@ -18,15 +18,14 @@ async def ping(ctx):
 @commands.has_permissions(administrator=True)
 async def set_welcome_message(ctx, *args):
     json_object["WELCOME_MESSAGE"] = ' '.join(args)
-    message_file = open('data/messages.json', 'w')
-    json.dump(json_object, message_file)
-    message_file.close()
+    messages = load_from_data('messages')
+    json.dump(json_object, messages)
+    messages.close()
 
 @client.event
 async def on_member_join(member):
-    message_file = open('data/messages.json', 'r')
-    message = json.load(message_file)['WELCOME_MESSAGE']
-    await member.send(message)
+    messages = load_from_data('messages')
+    await member.send(f"{messages['WELCOME_MESSAGE']} {messages['DEFAULT_CHANNEL_ID']}")
 
-client.run(load_config()['DISCORD_TOKEN'])
 print('Pierre-Bengt is online!')
+client.run(load_from_data('config')['DISCORD_TOKEN'])
