@@ -16,11 +16,12 @@ async def ping(ctx):
 
 @client.command(pass_context=True)
 @commands.has_permissions(administrator=True)
-async def set_welcome_message(ctx, *args):
-    json_object["WELCOME_MESSAGE"] = ' '.join(args)
-    messages = load_from_data('messages')
-    json.dump(json_object, messages)
-    messages.close()
+async def change_welcome_msg(ctx, *args):
+    data = load_from_data('messages')
+    data["DEFAULT_CHANNEL_ID"] = int(args)
+    with open("data/messages.json", "w") as doc:
+        json.dump(data, doc)
+    
 
 @client.event
 async def on_member_join(member):

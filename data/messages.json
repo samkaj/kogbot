@@ -1,4 +1,1 @@
-{
-    "WELCOME_MESSAGE" : "this is a welcome message",
-    "DEFAULT_CHANNEL_ID" : 1000
-}
+{"WELCOME_MESSAGE": "this is a welcome message", "DEFAULT_CHANNEL_ID": 1337}
