@@ -2,18 +2,18 @@ import discord
 import json
 from discord.ext import commands
 
-pb = commands.Bot(command_prefix="<")
+client = commands.Bot(command_prefix="<")
 
 def load_config():
     with open('data/config.json', 'r', encoding='utf-8') as doc:
         return json.load(doc)
 
 
-@pb.command()
+@client.command()
 async def ping(ctx):
     await ctx.send('pong')
 
-@pb.command(pass_context=True)
+@client.command(pass_context=True)
 @commands.has_permissions(administrator=True)
 async def set_welcome_message(ctx, *args):
     json_object["WELCOME_MESSAGE"] = ' '.join(args)
@@ -23,16 +23,20 @@ async def set_welcome_message(ctx, *args):
 
 #783980654236925964
 
-@pb.command()
+@client.command()
 async def DM(ctx, user_id):
     message_file = open('data/messages.json', 'r')
     message = json.load(message_file)['WELCOME_MESSAGE']
-    user = pb.get_user(int(user_id))
+    user = client.get_user(int(user_id))
     await user.send(message)
 
+@client.event
+async def on_member_join(member):
+    message_file = open('data/messages.json', 'r')
+    message = json.load(message_file)['WELCOME_MESSAGE']
+    await member.send(message)
 
 
 
-
-print('pb is online')
-pb.run(load_config()['DISCORD_TOKEN'])
+print('client is online')
+client.run(load_config()['DISCORD_TOKEN'])
