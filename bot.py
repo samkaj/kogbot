@@ -21,11 +21,17 @@ async def set_welcome_message(ctx, *args):
     json.dump(json_object, message_file)
     message_file.close()
 
+#783980654236925964
 
 @pb.command()
-async def DM(ctx, user:'783980654236925964', *, message=None):
-    message = message or "This Message is sent via DM"
+async def DM(ctx, user_id):
+    message_file = open('data/messages.json', 'r')
+    message = json.load(message_file)['WELCOME_MESSAGE']
+    user = pb.get_user(int(user_id))
     await user.send(message)
+
+
+
 
 
 print('pb is online')
