@@ -39,18 +39,15 @@ if __name__ == '__main__':
         await member.send(f"{welcome_message}\n**Landing page**: {landing_page}")
 
     @bot.command(pass_context=True)
-    async def ok(ctx):
-        g_id = ctx.guild.id
-        text_channel = 'default channel here'
-        welcome_message = 'default message'
+    @commands.has_permissions(administrator=True)
+    async def new_welcome_message(ctx, *args):
+        new_message = ' '.join(args)
         for g in _guilds:
-            if g.is_guild(g_id):
-                text_channel = g.get_msg_from_input('LANDING_PAGE_ID')
-                welcome_message = g.get_msg_from_input('WELCOME_MESSAGE')
+            if g.is_guild(ctx.guild.id):
+                g.set_new_message('WELCOME_MESSAGE', new_message)
                 break
-        landing_page = ctx.guild.get_channel(text_channel).text_channels[0].mention # ???
-        await ctx.send(f"{welcome_message}\n**Landing page**: {landing_page}")
-    
+        await ctx.send(f'I set the new welcome message to: \n"{new_message}"')
+        
 
 
     print('Pierre-Bengt is online!')
