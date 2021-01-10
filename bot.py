@@ -8,6 +8,8 @@ if __name__ == '__main__':
     bot = commands.Bot(command_prefix="!", intents=intent)
     _guilds = []
 
+    #TODO: map guild objects with GuildInfo objects
+
     @bot.event
     async def on_ready():
         # create GuildInfo objects for all guilds
@@ -22,7 +24,6 @@ if __name__ == '__main__':
     async def ping(ctx):
         print('pong')
         await ctx.send('pong')
-    
         
     @bot.event
     async def on_member_join(member):
