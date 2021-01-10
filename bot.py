@@ -34,8 +34,8 @@ if __name__ == '__main__':
             if g.is_guild(g_id):
                 text_channel = g.get_msg_from_input('LANDING_PAGE_ID')
                 welcome_message = g.get_msg_from_input('WELCOME_MESSAGE')
-                landing_page = member.guild.get_channel(text_channel).text_channels[0].mention # ???
-                await member.send(f"{welcome_message}\n**Landing page**: {landing_page}")
+                landing_page = member.guild.get_channel(text_channel).mention # ???
+                await member.send(f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i **{member.guild.name}**.\n{welcome_message}\nBörja här: {landing_page} :blue_heart:")
                 break
 
     @bot.command(pass_context=True)
@@ -59,7 +59,6 @@ if __name__ == '__main__':
                     await ctx.send(f'I set the new default channel ID to: \n"{ctx.guild.get_channel(new_id).mention}"')
         except TypeError:
             await ctx.send(f'I could not set the new ID, try entering a number!')
-            
 
     print('Pierre-Bengt is online!')
     bot.run(load_from_data('config')['DISCORD_TOKEN'])
