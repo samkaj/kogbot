@@ -2,6 +2,7 @@ import discord
 import json
 import guild_info
 from discord.ext import commands
+from discord.utils import get
 
 if __name__ == "__main__":
     intent = discord.Intents(messages=True, members=True, guilds=True)
@@ -30,7 +31,13 @@ if __name__ == "__main__":
         g_id = member.guild.id
         text_channel = "default channel here"
         welcome_message = "default message"
-        for g in _guilds:
+        for g in guild_map:
+            if(g[0].id == member.guild.id):
+                role_name = g[1].get_msg_from_input("DEFAULT_ROLE")
+                if role_name:
+                    role = get(member.guild.roles, name=role_name)
+                    for mem in member.guild.members:
+                        await mem.add_roles(role)
             text_channel = g[1].get_msg_from_input("LANDING_PAGE_ID")
             welcome_message = g[1].get_msg_from_input("WELCOME_MESSAGE")
             landing_page = member.guild.get_channel(text_channel).mention  # ???
@@ -38,6 +45,10 @@ if __name__ == "__main__":
                 f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i **{member.guild.name}**.\n{welcome_message}\nBörja här: {landing_page} :blue_heart:"
             )
             break
+
+    @bot.command(pass_context=True)
+    async def hug(ctx):
+        await ctx.send(f'*kramar* {ctx.author.mention} :blue_heart:')
 
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
@@ -60,6 +71,19 @@ if __name__ == "__main__":
                 )
         except TypeError:
             await ctx.send(f"I could not set the new ID, try entering a number!")
+
+    @bot.command(pass_context=True)
+    @commands.has_permissions(administrator=True)
+    async def give_default_role(ctx):
+        for g in guild_map:
+            if(g[0].id == ctx.guild.id):
+                role_name = g[1].get_msg_from_input("DEFAULT_ROLE")
+                if role_name:
+                    role = get(ctx.guild.roles, name=role_name)
+                    for member in ctx.guild.members:
+                        await member.add_roles(role)
+    
+
 
     print("Pierre-Bengt is online!")
     bot.run(load_from_data("config")["DISCORD_TOKEN"])
