@@ -23,7 +23,6 @@ if __name__ == '__main__':
         print('pong')
         await ctx.send('pong')
     
-    # TODO: set default channel command
         
     @bot.event
     async def on_member_join(member):
@@ -34,9 +33,9 @@ if __name__ == '__main__':
             if g.is_guild(g_id):
                 text_channel = g.get_msg_from_input('LANDING_PAGE_ID')
                 welcome_message = g.get_msg_from_input('WELCOME_MESSAGE')
+                landing_page = member.guild.get_channel(text_channel).text_channels[0].mention # ???
+                await member.send(f"{welcome_message}\n**Landing page**: {landing_page}")
                 break
-        landing_page = member.guild.get_channel(text_channel).text_channels[0].mention # ???
-        await member.send(f"{welcome_message}\n**Landing page**: {landing_page}")
 
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
@@ -45,10 +44,21 @@ if __name__ == '__main__':
         for g in _guilds:
             if g.is_guild(ctx.guild.id):
                 g.set_new_message('WELCOME_MESSAGE', new_message)
+                await ctx.send(f'I set the new welcome message to: \n"{new_message}"')
                 break
-        await ctx.send(f'I set the new welcome message to: \n"{new_message}"')
-        
 
+    @bot.command(pass_context=True)
+    @commands.has_permissions(administrator=True)
+    async def set_default_channel_id(ctx, arg):
+        try:
+            new_id = int(arg)
+            for g in _guilds:
+                if g.is_guild(ctx.guild.id):
+                    g.set_new_message('LANDING_PAGE_ID', new_id)
+                    await ctx.send(f'I set the new default channel ID to: \n"{ctx.guild.get_channel(new_id).mention}"')
+        except TypeError:
+            await ctx.send(f'I could not set the new ID, try entering a number!')
+            
 
     print('Pierre-Bengt is online!')
     bot.run(load_from_data('config')['DISCORD_TOKEN'])
