@@ -1,5 +1,7 @@
 data/config.json
 test.py
+.vscode
+data/guilds/*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
