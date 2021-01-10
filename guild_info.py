@@ -8,7 +8,7 @@ class GuildInfo:
         try:
             # create new message_file
             open(f'data/guilds/info_{g_id}.json', 'x')
-            with open('data/default_messages.json', 'r') as _from, open(f'data/guilds/info_{g_id}.json', 'w') as _to:
+            with open('data/guilds/default_messages.json', 'r') as _from, open(f'data/guilds/info_{g_id}.json', 'w') as _to:
                 _to.write(_from.read())
             self.set_default_info()
         except FileExistsError:

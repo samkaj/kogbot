@@ -2,7 +2,7 @@ data/config.json
 test.py
 .vscode
 data/guilds/*
-!data/guilds/.gitkeep
+!data/guilds/default_messages.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
