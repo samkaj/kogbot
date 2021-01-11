@@ -44,31 +44,51 @@ if __name__ == "__main__":
             g[1].set_new_message("welcome_message", new_message)
             await ctx.send(f'I set the new welcome message to: \n"{new_message}"')
             break
-
+    
+    # TODO: refactor this
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
-    async def set_default_channel_id(ctx, arg):
-        try:
-            new_id = int(arg)
-            for g in _guilds:
-                g[1].set_new_message("standard_channel_id", new_id)
-                await ctx.send(
-                    f'I set the new default channel ID to: \n"{ctx.guild.get_channel(new_id).mention}"'
-                )
-        except TypeError:
-            await ctx.send(f"I could not set the new ID, try entering a number!")
+    async def set_default_channel(ctx, arg):
+        g = _guilds.get(ctx.guild.id)
+        if arg == 'this' or arg == 'here':
+            new_id = ctx.channel.id
+        else:
+            try:
+                new_id = int(arg)
+                g.set_standard_channel(new_id)
+            except ValueError:
+                await ctx.send(f"I could not set the new channel :pensive:, *enter a number (or 'here'/'this', if you want to set the channel you're in currently)*")
+                return
 
-    # TODO: fix this
+        await ctx.send(
+            f'I set the new default channel to: \n"{ctx.guild.get_channel(new_id).mention}"'
+        )
+
+    # TODO: refactor this NOT DONE
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
-    async def give_default_role(ctx):
-        # for g in _guilds:
-        #     if(g[0].id == ctx.guild.id):
-        #         role_name = g[1].get_msg_from_input("DEFAULT_ROLE")
-        #         if role_name:
-        #             role = get(ctx.guild.roles, name=role_name)
-        #             for member in ctx.guild.members:
-        #                 await member.add_roles(role)
-        await ctx.send("Not yet implemented")
+    async def give_default_role(ctx, *args):
+        arguments = args
+        g = _guilds.get(ctx.guild.id)
+        role_name = g.get_default_role()
+        role = get(ctx.guild.roles, name=role_name)
+        print(args)
+        if role:
+            if args[0] == 'all':
+                members = ctx.guild.members
+            else:
+                members = []
+                for arg in args:
+                    members = [m for m in ctx.guild.members if arg == m.name.split('#')[0]]
+
+            for m in members:
+                await m.add_roles(role)
+
+            member_names = [m.name for m in members]
+            await ctx.send(f"Role **{role_name}** was added to {len(members)} member(s): {', '.join(member_names)} ")
+        else:
+            await ctx.send(f'No default role set, use `{ctx.prefix}set_default_role` (case sensitive) to set a default role. :blue_heart:')
+
+
 
     bot.run(load_from_data("config")["DISCORD_TOKEN"])

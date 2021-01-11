@@ -20,15 +20,17 @@ class GuildInfo:
             pass
 
         self.welcome_message = self.get_data('welcome_message')
+        self.default_role = self.get_data('default_role')
 
     def set_default_info(self):
         tmp_data = {
             'guild_name': self.guild_name,
             'guild_id': self.guild_id,
             'standard_channel_id': self.standard_channel_id,
-            'members': [(member.id, member.name) for member in self.members],
+            'members':[{member.name : member.id} for member in self.members],
             'owner': (self.owner.id, self.owner.name),
-            'welcome_message': 'welcome <3'
+            'welcome_message': 'welcome <3',
+            'default_role': 'none'
         }
         with open(f'data/guilds/info_{self.guild_id}.json', 'w') as doc:
             json.dump(tmp_data, doc)
@@ -46,19 +48,38 @@ class GuildInfo:
 
     def get_standard_channel_id(self):
         return self.standard_channel_id
-    
+
+    def set_standard_channel_id(self, new_channel):
+        self.standard_channel.id = int(new_channel.id)
+        self.change_data('standard_channel_id', int(new_channel))
+
+    def set_standard_channel(self, new_channel):
+        self.standard_channel = new_channel
+
     def get_standard_channel(self):
         return self.standard_channel
+    
+    def _get_user_id(self, name):
+        m = next(n for n in self.members if n.name == name)
+        if m:
+            print(m.id)
+            return m.id
+        return ' '
 
     def get_guild_file_name(self):
         return f'data/guilds/info_{self.get_guild_id()}.json'
-
 
     def get_msg_from_input(self, input_key):
         try:
             return self.get_all_data()[input_key]
         except KeyError:
             return
+    
+    def get_default_role(self):
+        return self.get_data('default_role')
+    
+    def get_members(self):
+        return self.members
 
 
     def change_data(self, key, val):
