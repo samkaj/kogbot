@@ -25,18 +25,11 @@ if __name__ == "__main__":
         print("pong")
         await ctx.send("pong")
 
-    @bot.command(pass_context=True)
-    async def test(ctx):
-        g = _guilds.get(ctx.guild.id)
-        await ctx.send(
-            f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i {g.get_g_name()}.\n{g.get_welcome_message()}\nBörja här: <#{g.get_standard_channel_id()}> :blue_heart:"
-        )
-
     @bot.event
     async def on_member_join(member):
-        g = _guilds.get(ctx.guild.id)
+        g = _guilds.get(member.guild.id)
         await member.send(
-            f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i **{g.get_g_name()}**.\n{g.get_welcome_message()}\nBörja här: {bot.get_channel(g.get_standard_channel_id()).mention} :blue_heart:"
+            f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i {g.get_g_name()}.\n{g.get_welcome_message()}\nBörja här: {bot.get_channel(g.get_standard_channel_id()).channels[0].mention} :blue_heart:"
         )
 
     @bot.command(pass_context=True)
