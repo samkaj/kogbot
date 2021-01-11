@@ -33,14 +33,8 @@ if __name__ == "__main__":
         text_channel = "default channel here"
         welcome_message = "default message"
         for g in guild_map:
-            if(g[0].id == member.guild.id):
-                role_name = g[1].get_msg_from_input("DEFAULT_ROLE")
-                if role_name:
-                    role = get(member.guild.roles, name=role_name)
-                    for mem in member.guild.members:
-                        await mem.add_roles(role)
-            text_channel = g[1].get_msg_from_input("LANDING_PAGE_ID")
-            welcome_message = g[1].get_msg_from_input("WELCOME_MESSAGE")
+            text_channel = g[1].get_msg_from_input("standard_channel_id")
+            welcome_message = g[1].get_msg_from_input("welcome_message")
             landing_page = member.guild.get_channel(text_channel).mention  # ???
             await member.send(
                 f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i **{member.guild.name}**.\n{welcome_message}\nBörja här: {landing_page} :blue_heart:"
@@ -56,7 +50,7 @@ if __name__ == "__main__":
     async def new_welcome_message(ctx, *args):
         new_message = " ".join(args)
         for g in guild_map:
-            g[1].set_new_message("WELCOME_MESSAGE", new_message)
+            g[1].set_new_message("welcome_message", new_message)
             await ctx.send(f'I set the new welcome message to: \n"{new_message}"')
             break
 
@@ -66,23 +60,25 @@ if __name__ == "__main__":
         try:
             new_id = int(arg)
             for g in guild_map:
-                g[1].set_new_message("LANDING_PAGE_ID", new_id)
+                g[1].set_new_message("standard_channel_id", new_id)
                 await ctx.send(
                     f'I set the new default channel ID to: \n"{ctx.guild.get_channel(new_id).mention}"'
                 )
         except TypeError:
             await ctx.send(f"I could not set the new ID, try entering a number!")
 
+    # TODO: fix this
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
     async def give_default_role(ctx):
-        for g in guild_map:
-            if(g[0].id == ctx.guild.id):
-                role_name = g[1].get_msg_from_input("DEFAULT_ROLE")
-                if role_name:
-                    role = get(ctx.guild.roles, name=role_name)
-                    for member in ctx.guild.members:
-                        await member.add_roles(role)
+        # for g in guild_map:
+        #     if(g[0].id == ctx.guild.id):
+        #         role_name = g[1].get_msg_from_input("DEFAULT_ROLE")
+        #         if role_name:
+        #             role = get(ctx.guild.roles, name=role_name)
+        #             for member in ctx.guild.members:
+        #                 await member.add_roles(role)
+        await ctx.send('Not yet implemented')
     
 
 

@@ -3,43 +3,58 @@ import json
 
 class GuildInfo:
     def __init__(self, guild_obj):
-        self.g_id = guild_obj.id
-        self.c_id = guild_obj.channels[0].id
+        self.guild_obj = guild_obj
+        self.guild_id = guild_obj.id
+        self.standard_channel_id = guild_obj.channels[0].id
+        self.members = guild_obj.members
+        self.owner = guild_obj.owner
+        self.guild_name = str(guild_obj)
         try:
             # create new message_file, throws exception if file already exists
-            open(f'data/guilds/info_{self.g_id}.json', 'x')
-            with open('data/guilds/default_messages.json', 'r') as _from, open(f'data/guilds/info_{self.g_id}.json', 'w') as _to:
-                _to.write(_from.read())
+            open(f'data/guilds/info_{self.guild_id}.json', 'x')
+
             self.set_default_info()
         except FileExistsError:
             pass
 
     def set_default_info(self):
-        print(f'setting default info, channel id: {self.c_id}')
-        self.set_new_message('LANDING_PAGE_ID', self.c_id)
+        tmp_data = {
+            'guild_name': self.guild_name,
+            'guild_id': self.guild_id,
+            'standard_channel_id': self.standard_channel_id,
+            'members': [(member.id, member.name) for member in self.members],
+            'owner': (self.owner.id, self.owner.name),
+            'welcome_message': 'welcome <3'
+        }
+        with open(f'data/guilds/info_{self.guild_id}.json', 'w') as doc:
+            json.dump(tmp_data, doc)
+
+        print(f'setting default info for guild: {self.guild_obj.name}')
+
         
     def get_guild_file_name(self):
-        return f'data/guilds/info_{self.get_id()}.json'
+        return f'data/guilds/info_{self.get_guild_id()}.json'
 
-    def get_id(self):
-        return self.g_id
+    def get_guild_id(self):
+        return self.guild_id
 
     def get_msg_from_input(self, input_key):
-        data = self.get_data()
         try:
-            return data[input_key]
+            return self.get_data()[input_key]
         except KeyError:
             return
 
-    def set_new_message(self, key, val):
+    def change_data(self, key, val):
         data = self.get_data()
         data[key] = val
         with open(self.get_guild_file_name(), 'w') as doc:
             json.dump(data, doc)
     
+    # Maybe rename?
     def get_data(self):
         with open(self.get_guild_file_name(), 'r') as doc:
             return json.load(doc)
     
+    # TODO: remove?
     def is_guild(self, input_id):
-        return input_id == self.get_id()
+        return input_id == self.get_guild_id()
