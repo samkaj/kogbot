@@ -7,49 +7,47 @@ from discord.utils import get
 if __name__ == "__main__":
     intent = discord.Intents(messages=True, members=True, guilds=True)
     bot = commands.Bot(command_prefix="!", intents=intent)
-    guild_map = []
-
-    # TODO: map guild objects with GuildInfo objects
+    _guilds = {}
 
     @bot.event
     async def on_ready():
         # create GuildInfo objects for all guilds
         for g in bot.guilds:
-            # guild_map.append((g, guild_info.GuildInfo(g.id, g.channels[0].id)))
-            guild_map.append(guild_info.GuildInfo(g))
+            _guilds[g.id] = guild_info.GuildInfo(g)
+        print("bot online")
 
     def load_from_data(filename):
         with open(f"data/{filename}.json", "r", encoding="utf-8") as doc:
             return json.load(doc)
 
-    @bot.command()
+    @bot.command(pass_context=True)
     async def ping(ctx):
         print("pong")
         await ctx.send("pong")
 
+    @bot.command(pass_context=True)
+    async def test(ctx):
+        g = _guilds.get(ctx.guild.id)
+        await ctx.send(
+            f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i {g.get_g_name()}.\n{g.get_welcome_message()}\nBörja här: <#{g.get_standard_channel_id()}> :blue_heart:"
+        )
+
     @bot.event
     async def on_member_join(member):
-        g_id = member.guild.id
-        text_channel = "default channel here"
-        welcome_message = "default message"
-        for g in guild_map:
-            text_channel = g[1].get_msg_from_input("standard_channel_id")
-            welcome_message = g[1].get_msg_from_input("welcome_message")
-            landing_page = member.guild.get_channel(text_channel).mention  # ???
-            await member.send(
-                f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i **{member.guild.name}**.\n{welcome_message}\nBörja här: {landing_page} :blue_heart:"
-            )
-            break
+        g = _guilds.get(ctx.guild.id)
+        await member.send(
+            f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i **{g.get_g_name()}**.\n{g.get_welcome_message()}\nBörja här: {bot.get_channel(g.get_standard_channel_id()).mention} :blue_heart:"
+        )
 
     @bot.command(pass_context=True)
     async def hug(ctx):
-        await ctx.send(f'*kramar* {ctx.author.mention} :blue_heart:')
+        await ctx.send(f"*kramar* {ctx.author.mention} :blue_heart:")
 
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
     async def new_welcome_message(ctx, *args):
         new_message = " ".join(args)
-        for g in guild_map:
+        for g in _guilds:
             g[1].set_new_message("welcome_message", new_message)
             await ctx.send(f'I set the new welcome message to: \n"{new_message}"')
             break
@@ -59,7 +57,7 @@ if __name__ == "__main__":
     async def set_default_channel_id(ctx, arg):
         try:
             new_id = int(arg)
-            for g in guild_map:
+            for g in _guilds:
                 g[1].set_new_message("standard_channel_id", new_id)
                 await ctx.send(
                     f'I set the new default channel ID to: \n"{ctx.guild.get_channel(new_id).mention}"'
@@ -71,16 +69,13 @@ if __name__ == "__main__":
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
     async def give_default_role(ctx):
-        # for g in guild_map:
+        # for g in _guilds:
         #     if(g[0].id == ctx.guild.id):
         #         role_name = g[1].get_msg_from_input("DEFAULT_ROLE")
         #         if role_name:
         #             role = get(ctx.guild.roles, name=role_name)
         #             for member in ctx.guild.members:
         #                 await member.add_roles(role)
-        await ctx.send('Not yet implemented')
-    
+        await ctx.send("Not yet implemented")
 
-
-    print("Pierre-Bengt is online!")
     bot.run(load_from_data("config")["DISCORD_TOKEN"])
