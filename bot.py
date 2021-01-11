@@ -15,7 +15,8 @@ if __name__ == "__main__":
     async def on_ready():
         # create GuildInfo objects for all guilds
         for g in bot.guilds:
-            guild_map.append((g, guild_info.GuildInfo(g.id, g.channels[0].id)))
+            # guild_map.append((g, guild_info.GuildInfo(g.id, g.channels[0].id)))
+            guild_map.append(guild_info.GuildInfo(g))
 
     def load_from_data(filename):
         with open(f"data/{filename}.json", "r", encoding="utf-8") as doc:
