@@ -45,7 +45,6 @@ if __name__ == "__main__":
             await ctx.send(f'I set the new welcome message to: \n"{new_message}"')
             break
     
-    # TODO: refactor this
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
     async def set_default_channel(ctx, arg):
@@ -64,7 +63,6 @@ if __name__ == "__main__":
             f'I set the new default channel to: \n"{ctx.guild.get_channel(new_id).mention}"'
         )
 
-    # TODO: refactor this NOT DONE
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
     async def give_default_role(ctx, *args):
@@ -72,20 +70,21 @@ if __name__ == "__main__":
         g = _guilds.get(ctx.guild.id)
         role_name = g.get_default_role()
         role = get(ctx.guild.roles, name=role_name)
-        print(args)
+        members = ctx.guild.members
         if role:
             if args[0] == 'all':
-                members = ctx.guild.members
+                for member in members:
+                    members_length = len(members)
+                    await member.add_roles(role)
             else:
-                members = []
+                names = [m.name.split('#')[0] for m in members]
+                members_length = len(args)
                 for arg in args:
-                    members = [m for m in ctx.guild.members if arg == m.name.split('#')[0]]
-
-            for m in members:
-                await m.add_roles(role)
-
-            member_names = [m.name for m in members]
-            await ctx.send(f"Role **{role_name}** was added to {len(members)} member(s): {', '.join(member_names)} ")
+                    if arg in names:
+                        i = names.index(arg)
+                        await members[i].add_roles(role)
+                
+            await ctx.send(f"Role **{role_name}** was added to {members_length} member(s)")
         else:
             await ctx.send(f'No default role set, use `{ctx.prefix}set_default_role` (case sensitive) to set a default role. :blue_heart:')
 
