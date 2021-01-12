@@ -73,8 +73,8 @@ if __name__ == "__main__":
         members = ctx.guild.members
         if role:
             if args[0] == 'all':
+                members_length = len(members)
                 for member in members:
-                    members_length = len(members)
                     await member.add_roles(role)
             else:
                 names = [m.name.split('#')[0] for m in members]
