@@ -25,7 +25,6 @@ if __name__ == "__main__":
     async def join(ctx):
         c = ctx.author.voice.channel
         await c.connect()
-        await ctx.send('VARMT VÄLKONMNA TILL MATTIAS 22-ÅRS (online)FEST :blue_heart: \nJAG ÄR SKURT OCH KOMMER VARA MED I BAKGRUNDEN :blue_heart:')
 
     @bot.command()
     async def leave(ctx):
@@ -52,8 +51,7 @@ if __name__ == "__main__":
                 challenge_msg = g.get_random_challenge(False) # random person
                 await c.send(f"{user.mention} {challenge_msg}")
             i = i + 1
-            
-            await asyncio.sleep(7)
+            await asyncio.sleep(3000)
 
 
     @bot.command(pass_context=True)
@@ -66,10 +64,7 @@ if __name__ == "__main__":
     @bot.command(pass_context=True)
     async def ping(ctx):
         print("pong")
-        g = _guilds.get(ctx.guild.id)
-        user = bot.get_user(g.get_random_user_id())
-        await ctx.send('-play 22 taylor swift')
-        await ctx.send(f"{user.mention} pong")
+        await ctx.send(f"pong")
 
     @bot.event
     async def on_member_join(member):
