@@ -3,31 +3,81 @@ import json
 import guild_info
 from discord.ext import commands
 from discord.utils import get
+import asyncio
+import time
 
 if __name__ == "__main__":
     intent = discord.Intents(messages=True, members=True, guilds=True)
     bot = commands.Bot(command_prefix="!", intents=intent)
     _guilds = {}
 
+
     @bot.event
     async def on_ready():
         # create GuildInfo objects for all guilds
         for g in bot.guilds:
             _guilds[g.id] = guild_info.GuildInfo(g)
-        print("bot online")
+        print("bot online, sending messages")
+        await send_challenge_interval()
+
+
+    @bot.command()
+    async def join(ctx):
+        c = ctx.author.voice.channel
+        await c.connect()
+        await ctx.send('VARMT VÄLKONMNA TILL MATTIAS 22-ÅRS (online)FEST :blue_heart: \nJAG ÄR SKURT OCH KOMMER VARA MED I BAKGRUNDEN :blue_heart:')
+
+    @bot.command()
+    async def leave(ctx):
+        await ctx.voice_client.disconnect()
 
     def load_from_data(filename):
         with open(f"data/{filename}.json", "r", encoding="utf-8") as doc:
             return json.load(doc)
 
+    async def send_challenge_interval():
+        await bot.wait_until_ready()
+        g = _guilds.get(801885706611589120) # only for mattias' party
+        c = bot.get_channel(g.get_standard_channel_id()).channels[0] # ????
+        role_name = g.get_default_role()
+        role = get(g.get_guild().roles, name=role_name)
+        i = 0
+        while True:
+            if i%2!=0: 
+                challenge_msg = g.get_random_challenge(True) # everyone 
+                i = 0
+                await c.send(f"{role.mention} {challenge_msg}")
+            else:
+                user = bot.get_user(g.get_random_user_id())
+                challenge_msg = g.get_random_challenge(False) # random person
+                await c.send(f"{user.mention} {challenge_msg}")
+            i = i + 1
+            
+            await asyncio.sleep(7)
+
+
+    @bot.command(pass_context=True)
+    async def challenge(ctx):
+        g = _guilds.get(ctx.guild.id)
+        user = bot.get_user(g.get_random_user_id())
+        challenge_msg = g.get_random_challenge()
+        await ctx.send(f"{user.mention} {challenge_msg}")
+
     @bot.command(pass_context=True)
     async def ping(ctx):
         print("pong")
-        await ctx.send("pong")
+        g = _guilds.get(ctx.guild.id)
+        user = bot.get_user(g.get_random_user_id())
+        await ctx.send('-play 22 taylor swift')
+        await ctx.send(f"{user.mention} pong")
 
     @bot.event
     async def on_member_join(member):
         g = _guilds.get(member.guild.id)
+        role_name = g.get_default_role()
+        role = get(member.guild.roles, name=role_name)
+        g.add_member(member.name, member.id)
+        await member.add_roles(role)
         await member.send(
             f"Jag heter Pierre-Bengt, och är en bot. Du gick nyss med i {g.get_g_name()}.\n{g.get_welcome_message()}\nBörja här: {bot.get_channel(g.get_standard_channel_id()).channels[0].mention} :blue_heart:"
         )
@@ -35,6 +85,8 @@ if __name__ == "__main__":
     @bot.command(pass_context=True)
     async def hug(ctx):
         await ctx.send(f"*kramar* {ctx.author.mention} :blue_heart:")
+
+
 
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
@@ -66,7 +118,6 @@ if __name__ == "__main__":
     @bot.command(pass_context=True)
     @commands.has_permissions(administrator=True)
     async def give_default_role(ctx, *args):
-        arguments = args
         g = _guilds.get(ctx.guild.id)
         role_name = g.get_default_role()
         role = get(ctx.guild.roles, name=role_name)
@@ -88,6 +139,21 @@ if __name__ == "__main__":
         else:
             await ctx.send(f'No default role set, use `{ctx.prefix}set_default_role` (case sensitive) to set a default role. :blue_heart:')
 
-
+    @bot.command(pass_context=True)
+    @commands.has_permissions(administrator=True)
+    async def set_default_role(ctx, *args):
+        g = _guilds.get(ctx.guild.id)
+        a = ' '.join(args)
+        found = False
+        for role in ctx.guild.roles:
+            if role.name == a:
+                g.change_data('default_role', a)
+                found = True
+                break
+        if found:
+            await ctx.send(f'New default role set to `{a}`')
+        else:
+            await ctx.send(f'Role not found, try again! (It is case-sensitive)')
+                
 
     bot.run(load_from_data("config")["DISCORD_TOKEN"])

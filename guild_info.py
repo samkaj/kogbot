@@ -1,5 +1,6 @@
 import discord
 import json
+import random
 
 # Handles information about discord.Guild and "saves" its state in json form.
 
@@ -21,13 +22,14 @@ class GuildInfo:
 
         self.welcome_message = self.get_data('welcome_message')
         self.default_role = self.get_data('default_role')
+        self.challenges = self.get_data('challenges')
 
     def set_default_info(self):
         tmp_data = {
             'guild_name': self.guild_name,
             'guild_id': self.guild_id,
             'standard_channel_id': self.standard_channel_id,
-            'members':[{member.name : member.id} for member in self.members],
+            'members':[[member.name, member.id] for member in self.members],
             'owner': (self.owner.id, self.owner.name),
             'welcome_message': 'welcome <3',
             'default_role': 'none'
@@ -35,6 +37,22 @@ class GuildInfo:
         with open(f'data/guilds/info_{self.guild_id}.json', 'w') as doc:
             json.dump(tmp_data, doc)
         print(f'setting default info for guild: {self.guild_obj.name}')
+
+    def get_guild(self):
+        return self.guild_obj
+
+    def write_json(self, data):
+        with open(f'data/guilds/info_{self.guild_id}.json', 'w') as f:
+            json.dump(data, f)
+
+    def add_member(self, name, _id):
+        with open(f'data/guilds/info_{self.guild_id}.json') as f:
+            data = json.load(f)
+            tmp = data['members']
+            new_user = [name, _id]
+            tmp.append(new_user)
+        
+        self.write_json(data)
 
     def get_guild_id(self):
         return self.guild_id
@@ -81,7 +99,6 @@ class GuildInfo:
     def get_members(self):
         return self.members
 
-
     def change_data(self, key, val):
         data = self.get_all_data()
         data[key] = val
@@ -99,3 +116,14 @@ class GuildInfo:
     # TODO: remove?
     def is_guild(self, input_id):
         return input_id == self.get_guild_id()
+
+    def get_random_user_id(self):
+        return random.choice(self.get_data('members'))[1]
+
+    def get_random_challenge(self, everyone):
+        if everyone:
+            return random.choice(self.get_data('everyone-challenges'))
+        return random.choice(self.get_data('challenges'))
+
+
+    
