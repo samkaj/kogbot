@@ -5,6 +5,7 @@ from discord.ext import commands
 from discord.utils import get
 import asyncio
 import time
+import random
 
 if __name__ == "__main__":
     intent = discord.Intents(messages=True, members=True, guilds=True)
@@ -42,16 +43,30 @@ if __name__ == "__main__":
         role = get(g.get_guild().roles, name=role_name)
         i = 0
         while True:
-            if i%2!=0: 
+            if random.randint(0,3) == 1:
+                await c.send(f'{role.mention} MELLANSUP :peepoHappy:')
+                await asyncio.sleep(15)
+            if random.randint(0,100) == 1:
+                user = bot.get_user(g.get_random_user_id())
+                await c.send(f'{user.mention} LEGENDARY - DELA UT 30 KLUNKAR :monkaS:')
+                await asyncio.sleep(100)
+            if random.randint(0,5) == 1:
+                feels_bad = [
+                    "Roxanne!",
+                    "Thunderstruck!",
+                    "Vattenfall!"
+                ]
+                await c.send(f'RARE - {random.choice(feels_bad)} :kekw: :kekw: :kekw:')
+            elif i%2!=0:
                 challenge_msg = g.get_random_challenge(True) # everyone 
                 i = 0
-                await c.send(f"{role.mention} {challenge_msg}")
+                await c.send(f"{role.mention} {challenge_msg} :hypers:")
             else:
                 user = bot.get_user(g.get_random_user_id())
                 challenge_msg = g.get_random_challenge(False) # random person
-                await c.send(f"{user.mention} {challenge_msg}")
+                await c.send(f"{user.mention}, {challenge_msg} :PepeLaugh:")
             i = i + 1
-            await asyncio.sleep(3000)
+            await asyncio.sleep(300)
 
 
     @bot.command(pass_context=True)
