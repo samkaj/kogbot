@@ -1,0 +1,14 @@
+{"guild_name": "g\u00f6tt", "guild_id": 789945640066351104, "standard_channel_id": 789945640066351106, "members": [["Syntax", 157199501596164096], ["emmaemsi", 689094704926818339], ["kajava", 783980654236925964], ["norrisnora", 784852442561904731]], "owner": [783980654236925964, "kajava"], "welcome_message": "welcome <3", "default_role": "none", 
+    "challenges" : 
+    [
+        "är en megatönt - drick 5 klunkar", 
+        "öppna fönstret och skrik eller drick 10 klunkar", 
+        "hämden är ljuv för dig som flintis - dela ut 7 klunkar",
+        "badbollen hämnas - dela ut 5 klunkar",
+        "Skurt tycker du är ful - ta en shot",
+        "sätt på valfri låt och gör ett uppträdande - ta annars en shot",
+        "TUMREGELN: sätt tummen i pannan (om du har cam) - sista personen dricker 5 klunkar"
+    ], 
+    "everyone-challenges" : 
+    ["hej", "hallå", "tjo"]
+}

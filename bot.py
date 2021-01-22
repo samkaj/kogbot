@@ -39,35 +39,41 @@ if __name__ == "__main__":
         await bot.wait_until_ready()
         g = _guilds.get(801885706611589120) # only for mattias' party
         c = bot.get_channel(g.get_standard_channel_id()).channels[0] # ????
-        role_name = g.get_default_role()
-        role = get(g.get_guild().roles, name=role_name)
         i = 0
         while True:
-            if random.randint(0,3) == 1:
-                await c.send(f'{role.mention} MELLANSUP :peepoHappy:')
-                await asyncio.sleep(15)
+            await bot.wait_until_ready()
+            role_name = g.get_default_role()
+            role = get(g.get_guild().roles, name=role_name)
+            i = i + 1
             if random.randint(0,100) == 1:
                 user = bot.get_user(g.get_random_user_id())
-                await c.send(f'{user.mention} LEGENDARY - DELA UT 30 KLUNKAR :monkaS:')
+                await c.send(f'{user.mention} **LEGENDARY** - DELA UT 30 KLUNKAR')
                 await asyncio.sleep(100)
-            if random.randint(0,5) == 1:
+            elif random.randint(0,60) == 1:
                 feels_bad = [
                     "Roxanne!",
                     "Thunderstruck!",
                     "Vattenfall!"
                 ]
-                await c.send(f'RARE - {random.choice(feels_bad)} :kekw: :kekw: :kekw:')
-            elif i%2!=0:
+                await c.send(f'RARE - {random.choice(feels_bad)}')
+            if i%2==0:
+                print('everyone')
                 challenge_msg = g.get_random_challenge(True) # everyone 
                 i = 0
-                await c.send(f"{role.mention} {challenge_msg} :hypers:")
+                await c.send(f"{role.mention} - {challenge_msg}")
             else:
+                print('random user')
                 user = bot.get_user(g.get_random_user_id())
                 challenge_msg = g.get_random_challenge(False) # random person
-                await c.send(f"{user.mention}, {challenge_msg} :PepeLaugh:")
-            i = i + 1
+                await c.send(f"{user.mention} - {challenge_msg}")
             await asyncio.sleep(300)
 
+
+    @bot.command(pass_context=True)
+    async def lambo(ctx):
+        g = _guilds.get(ctx.guild.id)
+        u = bot.get_user(g.get_random_user_id())
+        await ctx.send(f'Lambo på {u.mention}!! http://www.studentsanger.se/lambo.html')
 
     @bot.command(pass_context=True)
     async def challenge(ctx):
