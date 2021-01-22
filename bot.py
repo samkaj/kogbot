@@ -66,7 +66,7 @@ if __name__ == "__main__":
                 user = bot.get_user(g.get_random_user_id())
                 challenge_msg = g.get_random_challenge(False) # random person
                 await c.send(f"{user.mention} - {challenge_msg}")
-            await asyncio.sleep(300)
+            await asyncio.sleep(120)
 
 
     @bot.command(pass_context=True)
